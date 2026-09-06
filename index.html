@@ -28,7 +28,7 @@
             --surface-light: #2a2a2a;
             --text-main: #f5f5f5;
             --text-muted: #a0a0a0;
-            --accent: #d90267; /* Puedes ajustar este color de acento según la identidad de tu marca */
+            --accent: #d90267;
             --accent-hover: #b30055;
             --whatsapp-green: #25D366;
             
@@ -95,7 +95,7 @@
         }
 
         .logo img {
-            height: 50px; /* Ajustar según el svg */
+            height: 50px;
         }
 
         /* =========================================
@@ -166,7 +166,7 @@
         }
 
         .btn-outline:hover {
-            background-color: rgba(217, 2, 103, 0.1); /* Cambiar según var(--accent) */
+            background-color: rgba(217, 2, 103, 0.1);
         }
 
         /* =========================================
@@ -230,7 +230,6 @@
             aspect-ratio: 4/5;
             background-color: var(--surface-light);
             border-radius: 8px;
-            /* Aquí irán las imágenes generadas por IA */
             background-image: url('placeholder-image.jpg'); 
             background-size: cover;
             background-position: center;
@@ -358,7 +357,7 @@
         }
 
         .footer-logo img {
-            height: 40px; /* Ajustar según logo_horizontal.svg */
+            height: 40px;
             margin-bottom: 20px;
             opacity: 0.8;
         }
@@ -369,7 +368,7 @@
         }
 
         /* =========================================
-           WHATSAPP FAB (Botón Flotante)
+           WHATSAPP FAB
            ========================================= */
         .whatsapp-fab {
             position: fixed;
@@ -393,7 +392,6 @@
             transform: scale(1.1);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -414,7 +412,6 @@
             <a href="#" class="logo">
                 <img src="logo.svg" alt="Valknut">
             </a>
-            <!-- Aquí puede ir un menú de navegación tipo hamburguesa más adelante -->
         </div>
     </header>
 
@@ -452,7 +449,7 @@
         </div>
     </section>
 
-    <!-- GALERÍA (PLACEHOLDER PARA IMÁGENES IA) -->
+    <!-- GALERÍA -->
     <section class="gallery">
         <div class="container">
             <h2>NUESTRO TRABAJO</h2>
@@ -465,50 +462,20 @@
         </div>
     </section>
 
-    <!-- FORMULARIO DE PEDIDO / INTEGRACIÓN CON EDITOR -->
+    <!-- FORMULARIO DE PEDIDO -->
     <section class="order-section" id="order-form">
         <div class="container">
             <h2>¿LISTO? COMPLETÁ TU PEDIDO ACÁ</h2>
             <p>Ingresa los datos de tu equipo. Generaremos un PDF con tu pedido y te contactaremos por WhatsApp.</p>
             
-            <!-- Tabla dinámica para el plantel -->
-<div class="form-group">
-    <label>DETALLE DEL PLANTEL</label>
-    <table class="roster-table" id="roster-table">
-        <thead>
-            <tr>
-                <th>TIPO</th>
-                <th>CATEGORÍA</th>
-                <th>TALLE</th>
-                <th>NÚMERO</th>
-                <th>NOMBRE EN ESPALDA</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Aquí el script insertará las filas automáticamente -->
-        </tbody>
-    </table>
-    <button type="button" id="add-row-btn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
-</div>
-    <label>DETALLE DEL PLANTEL</label>
-    <table class="roster-table" id="roster-table">
-        <thead>
-            <tr>
-                <th>TIPO</th>
-                <th>CATEGORÍA</th>
-                <th>TALLE</th>
-                <th>NÚMERO</th>
-                <th>NOMBRE EN ESPALDA</th>
-                <th></th> <!-- Columna vacía para el botón eliminar -->
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Las filas se generarán desde JavaScript -->
-        </tbody>
-    </table>
-    <button type="button" id="add-row-btn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
-</div>
+            <div class="order-form-container">
+                <form id="checkout-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="team-name">NOMBRE DEL EQUIPO</label>
+                            <input type="text" id="team-name" placeholder="Ej. Los Leones F.C." required>
+                        </div>
+                        <div class="form-group">
                             <label for="contact-name">TU NOMBRE</label>
                             <input type="text" id="contact-name" placeholder="Ej. Juan Pérez" required>
                         </div>
@@ -526,7 +493,7 @@
                         </div>
                     </div>
 
-                    <!-- Zona de subida de diseño desde el editor -->
+                    <!-- Zona de subida de diseño -->
                     <div class="form-group">
                         <label>DISEÑO (JPG DESCARGADO DEL EDITOR)</label>
                         <div class="file-upload" onclick="document.getElementById('design-file').click()">
@@ -535,35 +502,22 @@
                         </div>
                     </div>
 
-                    <!-- Tabla dinámica para talles y números -->
+                    <!-- Tabla dinámica limpia (única) -->
                     <div class="form-group">
                         <label>DETALLE DEL PLANTEL</label>
                         <table class="roster-table" id="roster-table">
                             <thead>
                                 <tr>
                                     <th>TIPO</th>
+                                    <th>CATEGORÍA</th>
                                     <th>TALLE</th>
                                     <th>NÚMERO</th>
                                     <th>NOMBRE EN ESPALDA</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Filas de ejemplo que luego se generarán dinámicamente con JS -->
-                                <tr>
-                                    <td>
-                                        <select>
-                                            <option>Jugador</option>
-                                            <option>Golero</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select>
-                                            <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" placeholder="10" style="width: 70px;"></td>
-                                    <td><input type="text" placeholder="GÓMEZ"></td>
-                                </tr>
+                                <!-- Las filas se generan automáticamente mediante JS -->
                             </tbody>
                         </table>
                         <button type="button" id="add-row-btn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
@@ -589,16 +543,16 @@
 
     <!-- BOTÓN FLOTANTE WHATSAPP -->
     <a href="https://wa.me/59892585171" target="_blank" class="whatsapp-fab" aria-label="Contactar por WhatsApp">
-        <!-- SVG Icono WhatsApp simplificado -->
         <svg width="35" height="35" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
         </svg>
     </a>
-<!-- Librerías para generar el PDF -->
+
+    <!-- Librerías para generar el PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- Nuestro script personalizado -->
+    <!-- Nuestro script personalizado (Asegúrate de que el archivo se llame formulario.js) -->
     <script src="formulario.js"></script>
 </body>
 </html>

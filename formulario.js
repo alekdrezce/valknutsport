@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const tablaPlantel = document.querySelector("#roster-table tbody");
     const btnEnviar = document.querySelector(".btn-whatsapp-submit");
 
-    // Arrays de talles
+    // Arrays de talles actualizados
     const tallesAdulto = ["S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
     const tallesNino = ["4", "6", "8", "10", "12", "14", "16"];
 
