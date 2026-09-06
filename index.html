@@ -471,10 +471,26 @@
             <h2>¿LISTO? COMPLETÁ TU PEDIDO ACÁ</h2>
             <p>Ingresa los datos de tu equipo. Generaremos un PDF con tu pedido y te contactaremos por WhatsApp.</p>
             
-            <div class="order-form-container">
-                <form id="checkout-form">
-                    <div class="form-row">
-                        <div class="form-group">
+            <!-- Tabla dinámica para el plantel -->
+<div class="form-group">
+    <label>DETALLE DEL PLANTEL</label>
+    <table class="roster-table" id="roster-table">
+        <thead>
+            <tr>
+                <th>TIPO</th>
+                <th>CATEGORÍA</th>
+                <th>TALLE</th>
+                <th>NÚMERO</th>
+                <th>NOMBRE EN ESPALDA</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí el script insertará las filas automáticamente -->
+        </tbody>
+    </table>
+    <button type="button" id="add-row-btn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
+</div>
     <label>DETALLE DEL PLANTEL</label>
     <table class="roster-table" id="roster-table">
         <thead>

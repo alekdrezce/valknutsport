@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 1. Función para agregar una nueva fila con lógica dinámica
     function agregarFila() {
+        if (!tablaPlantel) return;
+
         const nuevaFila = document.createElement("tr");
         
         nuevaFila.innerHTML = `
@@ -66,75 +68,86 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Agregar la primera fila al cargar la página
-    agregarFila();
+    // Agregar la primera fila al cargar la página si la tabla existe
+    if (tablaPlantel) {
+        agregarFila();
+    }
 
     // Evento para el botón de agregar jugador
-    btnAgregar.addEventListener("click", agregarFila);
+    if (btnAgregar) {
+        btnAgregar.addEventListener("click", agregarFila);
+    }
 
     // 2. Lógica para recopilar datos, generar PDF y enviar a WhatsApp
-    btnEnviar.addEventListener("click", function(e) {
-        e.preventDefault();
+    if (btnEnviar) {
+        btnEnviar.addEventListener("click", function(e) {
+            e.preventDefault();
 
-        const equipo = document.getElementById("team-name").value.trim();
-        const contacto = document.getElementById("contact-name").value.trim();
-        const cantidad = document.getElementById("total-qty").value;
+            const equipo = document.getElementById("team-name").value.trim();
+            const contacto = document.getElementById("contact-name").value.trim();
+            const cantidad = document.getElementById("total-qty").value;
 
-        // Validación básica
-        if (!equipo || !contacto || !cantidad) {
-            alert("Por favor, completa el nombre del equipo, tu nombre y la cantidad aproximada.");
-            return;
-        }
+            // Validación básica
+            if (!equipo || !contacto || !cantidad) {
+                alert("Por favor, completa el nombre del equipo, tu nombre y la cantidad aproximada.");
+                return;
+            }
 
-        const filas = document.querySelectorAll("#roster-table tbody tr");
-        let datosTabla = [];
-        let textoWhatsApp = `Hola Valknut! Soy ${contacto}. Quiero hacer un pedido para mi equipo "${equipo}".\n`;
-        textoWhatsApp += `Cantidad estimada: ${cantidad} camisetas.\n\n`;
-        textoWhatsApp += `*Detalle del plantel:*\n`;
+            const filas = document.querySelectorAll("#roster-table tbody tr");
+            if (filas.length === 0) {
+                alert("Por favor, agrega al menos un jugador en la tabla.");
+                return;
+            }
 
-        // Recorrer la tabla para extraer la info
-        filas.forEach(fila => {
-            const tipo = fila.querySelector(".select-tipo").value;
-            const categoria = fila.querySelector(".select-categoria").value;
-            const talle = fila.querySelector(".select-talle").value;
-            const numero = fila.querySelector(".input-numero").value || "S/N";
-            const nombre = fila.querySelector(".input-nombre").value || "Sin nombre";
+            let datosTabla = [];
+            let textoWhatsApp = `Hola Valknut! Soy ${contacto}. Quiero hacer un pedido para mi equipo "${equipo}".\n`;
+            textoWhatsApp += `Cantidad estimada: ${cantidad} camisetas.\n\n`;
+            textoWhatsApp += `*Detalle del plantel:*\n`;
 
-            datosTabla.push([tipo, categoria, talle, numero, nombre]);
-            textoWhatsApp += `- ${tipo} (${categoria}) | Talle ${talle} | N° ${numero} | ${nombre}\n`;
+            // Recorrer la tabla para extraer la info
+            filas.forEach(fila => {
+                const tipo = fila.querySelector(".select-tipo").value;
+                const categoria = fila.querySelector(".select-categoria").value;
+                const talle = fila.querySelector(".select-talle").value;
+                const numero = fila.querySelector(".input-numero").value || "S/N";
+                const nombre = fila.querySelector(".input-nombre").value || "Sin nombre";
+
+                datosTabla.push([tipo, categoria, talle, numero, nombre]);
+                textoWhatsApp += `- ${tipo} (${categoria}) | Talle ${talle} | N° ${numero} | ${nombre}\n`;
+            });
+
+            textoWhatsApp += `\n*Nota:* Te adjunto en este chat el PDF del pedido y las imágenes del diseño que descargué del editor 3D.`;
+
+            // 3. Generar el PDF con jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Título y datos del cliente en el PDF
+            doc.setFontSize(20);
+            doc.text("Pedido de Camisetas - Valknut", 14, 20);
+            doc.setFontSize(12);
+            doc.text(`Equipo: ${equipo}`, 14, 30);
+            doc.text(`Contacto: ${contacto}`, 14, 38);
+            doc.text(`Cantidad: ${cantidad}`, 14, 46);
+
+            // Generar tabla en el PDF
+            doc.autoTable({
+                startY: 55,
+                head: [['Tipo', 'Categoría', 'Talle', 'Número', 'Nombre en Espalda']],
+                body: datosTabla,
+                theme: 'grid',
+                headStyles: { fillColor: [217, 2, 103] }
+            });
+
+            // Descargar el PDF
+            const nombreArchivo = `Pedido_Valknut_${equipo.replace(/\s+/g, '_')}.pdf`;
+            doc.save(nombreArchivo);
+
+            // 4. Redirigir a WhatsApp
+            setTimeout(() => {
+                const urlWhatsApp = `https://wa.me/59892585171?text=${encodeURIComponent(textoWhatsApp)}`;
+                window.open(urlWhatsApp, '_blank');
+            }, 1000);
         });
-
-        textoWhatsApp += `\n*Nota:* Te adjunto en este chat el PDF del pedido y las imágenes del diseño que descargué del editor 3D.`;
-
-        // 3. Generar el PDF con jsPDF
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Título y datos del cliente en el PDF
-        doc.setFontSize(20);
-        doc.text("Pedido de Camisetas - Valknut", 14, 20);
-        doc.setFontSize(12);
-        doc.text(`Equipo: ${equipo}`, 14, 30);
-        doc.text(`Contacto: ${contacto}`, 14, 38);
-        doc.text(`Cantidad: ${cantidad}`, 14, 46);
-
-        // Generar tabla en el PDF (Actualizada con 5 columnas)
-        doc.autoTable({
-            startY: 55,
-            head: [['Tipo', 'Categoría', 'Talle', 'Número', 'Nombre en Espalda']],
-            body: datosTabla,
-            theme: 'grid',
-            headStyles: { fillColor: [217, 2, 103] }
-        });
-
-        // Descargar el PDF
-        const nombreArchivo = `Pedido_Valknut_${equipo.replace(/\s+/g, '_')}.pdf`;
-        doc.save(nombreArchivo);
-
-        // 4. Redirigir a WhatsApp (Esperamos 1 segundo para dar tiempo a la descarga)
-        setTimeout(() => {
-            const urlWhatsApp = `https://wa.me/59892585171?text=${encodeURIComponent(textoWhatsApp)}`;
-            window.open(urlWhatsApp, '_blank');
-        }, 1000);
-    });
+    }
 });
