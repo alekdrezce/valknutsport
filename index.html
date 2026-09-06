@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valknut - Diseño de élite a precio de liga</title>
+    <style>
+        /* =========================================
+           VARIABLES Y TIPOGRAFÍAS
+           ========================================= */
+        @font-face {
+            font-family: 'Roadgeek 2005 Series 5B';
+            src: url('roadgeek 2005 series 5b.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Roadgeek 2005 Mittelschrift';
+            src: url('roadgeek 2005 mittelschrift.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #0d0d0d;
+            --surface-color: #1a1a1a;
+            --surface-light: #2a2a2a;
+            --text-main: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --accent: #d90267; /* Puedes ajustar este color de acento según la identidad de tu marca */
+            --accent-hover: #b30055;
+            --whatsapp-green: #25D366;
+            
+            --font-title: 'Roadgeek 2005 Series 5B', sans-serif;
+            --font-body: 'Roadgeek 2005 Mittelschrift', sans-serif;
+        }
+
+        /* =========================================
+           RESET Y ESTILOS GLOBALES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-title);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* =========================================
+           HEADER
+           ========================================= */
+        header {
+            background-color: rgba(13, 13, 13, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px; /* Ajustar según el svg */
+        }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .hero p.slogan {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-family: var(--font-title);
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-light);
+            color: white;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background-color: #333;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 1px solid var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(217, 2, 103, 0.1); /* Cambiar según var(--accent) */
+        }
+
+        /* =========================================
+           CARACTERÍSTICAS / VALOR
+           ========================================= */
+        .features {
+            padding: 80px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--surface-color);
+            padding: 40px 30px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--surface-light);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* =========================================
+           GALERÍA (SOCIAL PROOF)
+           ========================================= */
+        .gallery {
+            padding: 80px 0;
+            background-color: var(--surface-color);
+        }
+
+        .gallery h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 4/5;
+            background-color: var(--surface-light);
+            border-radius: 8px;
+            /* Aquí irán las imágenes generadas por IA */
+            background-image: url('placeholder-image.jpg'); 
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* =========================================
+           FORMULARIO DE PEDIDO
+           ========================================= */
+        .order-section {
+            padding: 80px 0;
+        }
+
+        .order-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .order-section > p {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .order-form-container {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--surface-light);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+            font-family: var(--font-body);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Tabla dinámica para el plantel */
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .roster-table th, .roster-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .roster-table th {
+            font-family: var(--font-title);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--surface-light);
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--accent);
+        }
+
+        .btn-whatsapp-submit {
+            background-color: var(--whatsapp-green);
+            color: #121212;
+            width: 100%;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .btn-whatsapp-submit:hover {
+            background-color: #1ebe5d;
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+        footer {
+            background-color: var(--surface-color);
+            padding: 40px 0 20px 0;
+            text-align: center;
+            border-top: 1px solid var(--surface-light);
+        }
+
+        .footer-logo img {
+            height: 40px; /* Ajustar según logo_horizontal.svg */
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* =========================================
+           WHATSAPP FAB (Botón Flotante)
+           ========================================= */
+        .whatsapp-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--whatsapp-green);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .whatsapp-fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .roster-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABECERA -->
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <img src="logo.svg" alt="Valknut">
+            </a>
+            <!-- Aquí puede ir un menú de navegación tipo hamburguesa más adelante -->
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <h1>DISEÑO DE ÉLITE A PRECIO DE LIGA</h1>
+            <p class="slogan">Indumentaria técnica de alto rendimiento para tu equipo.</p>
+            
+            <div class="cta-group">
+                <a href="disenador_valknut_colorkey.html" class="btn btn-primary">DISEÑA TU CAMISETA 3D</a>
+                <a href="#order-form" class="btn btn-secondary">SOLICITAR PRESUPUESTO</a>
+                <a href="https://wa.me/59892585171" target="_blank" class="btn btn-outline">HABLAR CON UN ASESOR</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROPUESTA DE VALOR -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>PRECISIÓN EN LOS TALLES</h3>
+                    <p>Moldería exacta y estandarizada. El calce perfecto para que cada jugador rinda al máximo sin incomodidades.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>CALIDAD DE IMPRESIÓN</h3>
+                    <p>Sublimación full color de alta definición. Colores vibrantes que no se desgastan ni destiñen con los lavados.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>TELAS DE ALTO RENDIMIENTO</h3>
+                    <p>Materiales técnicos diseñados para la exigencia deportiva. Máxima respirabilidad y absorción del sudor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALERÍA (PLACEHOLDER PARA IMÁGENES IA) -->
+    <section class="gallery">
+        <div class="container">
+            <h2>NUESTRO TRABAJO</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULARIO DE PEDIDO / INTEGRACIÓN CON EDITOR -->
+    <section class="order-section" id="order-form">
+        <div class="container">
+            <h2>¿LISTO? COMPLETÁ TU PEDIDO ACÁ</h2>
+            <p>Ingresa los datos de tu equipo. Generaremos un PDF con tu pedido y te contactaremos por WhatsApp.</p>
+            
+            <div class="order-form-container">
+                <form id="checkout-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="team-name">NOMBRE DEL EQUIPO</label>
+                            <input type="text" id="team-name" placeholder="Ej. Los Leones F.C." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-name">TU NOMBRE</label>
+                            <input type="text" id="contact-name" placeholder="Ej. Juan Pérez" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="total-qty">CANTIDAD APROXIMADA</label>
+                            <select id="total-qty" required>
+                                <option value="" disabled selected>Selecciona una opción</option>
+                                <option value="10-15">10 a 15 camisetas</option>
+                                <option value="16-25">16 a 25 camisetas</option>
+                                <option value="26+">Más de 25 camisetas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Zona de subida de diseño desde el editor -->
+                    <div class="form-group">
+                        <label>DISEÑO (JPG DESCARGADO DEL EDITOR)</label>
+                        <div class="file-upload" onclick="document.getElementById('design-file').click()">
+                            <p>📎 Haz clic aquí para adjuntar el diseño de jugador y golero</p>
+                            <input type="file" id="design-file" style="display: none;" accept="image/jpeg, image/png" multiple>
+                        </div>
+                    </div>
+
+                    <!-- Tabla dinámica para talles y números -->
+                    <div class="form-group">
+                        <label>DETALLE DEL PLANTEL</label>
+                        <table class="roster-table" id="roster-table">
+                            <thead>
+                                <tr>
+                                    <th>TIPO</th>
+                                    <th>TALLE</th>
+                                    <th>NÚMERO</th>
+                                    <th>NOMBRE EN ESPALDA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Filas de ejemplo que luego se generarán dinámicamente con JS -->
+                                <tr>
+                                    <td>
+                                        <select>
+                                            <option>Jugador</option>
+                                            <option>Golero</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select>
+                                            <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" placeholder="10" style="width: 70px;"></td>
+                                    <td><input type="text" placeholder="GÓMEZ"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
+                    </div>
+
+                    <button type="button" class="btn btn-whatsapp-submit">
+                        GENERAR PDF Y ENVIAR POR WHATSAPP
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="logo_horizontal.svg" alt="Valknut">
+            </div>
+            <p class="copyright">&copy; 2026 Valknut. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <a href="https://wa.me/59892585171" target="_blank" class="whatsapp-fab" aria-label="Contactar por WhatsApp">
+        <!-- SVG Icono WhatsApp simplificado -->
+        <svg width="35" height="35" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+    </a>
+
+</body>
+</html>
