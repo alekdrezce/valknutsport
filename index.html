@@ -475,10 +475,24 @@
                 <form id="checkout-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="team-name">NOMBRE DEL EQUIPO</label>
-                            <input type="text" id="team-name" placeholder="Ej. Los Leones F.C." required>
-                        </div>
-                        <div class="form-group">
+    <label>DETALLE DEL PLANTEL</label>
+    <table class="roster-table" id="roster-table">
+        <thead>
+            <tr>
+                <th>TIPO</th>
+                <th>CATEGORÍA</th>
+                <th>TALLE</th>
+                <th>NÚMERO</th>
+                <th>NOMBRE EN ESPALDA</th>
+                <th></th> <!-- Columna vacía para el botón eliminar -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán desde JavaScript -->
+        </tbody>
+    </table>
+    <button type="button" id="add-row-btn" class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px;">+ AGREGAR JUGADOR</button>
+</div>
                             <label for="contact-name">TU NOMBRE</label>
                             <input type="text" id="contact-name" placeholder="Ej. Juan Pérez" required>
                         </div>

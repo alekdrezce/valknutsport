@@ -3,36 +3,74 @@ document.addEventListener("DOMContentLoaded", function() {
     const tablaPlantel = document.querySelector("#roster-table tbody");
     const btnEnviar = document.querySelector(".btn-whatsapp-submit");
 
-    // 1. Lógica para agregar nuevas filas a la tabla
-    btnAgregar.addEventListener("click", function() {
+    // Arrays de talles
+    const tallesAdulto = ["S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
+    const tallesNino = ["4", "6", "8", "10", "12", "14", "16"];
+
+    // 1. Función para agregar una nueva fila con lógica dinámica
+    function agregarFila() {
         const nuevaFila = document.createElement("tr");
+        
         nuevaFila.innerHTML = `
             <td>
-                <select>
-                    <option>Jugador</option>
-                    <option>Golero</option>
+                <select class="select-tipo">
+                    <option value="Jugador">Jugador</option>
+                    <option value="Golero">Golero</option>
                 </select>
             </td>
             <td>
-                <select>
-                    <option>S</option>
-                    <option>M</option>
-                    <option>L</option>
-                    <option>XL</option>
-                    <option>XXL</option>
+                <select class="select-categoria">
+                    <option value="Adulto">Adulto</option>
+                    <option value="Niño">Niño</option>
                 </select>
             </td>
-            <td><input type="number" placeholder="Ej: 10" style="width: 70px;"></td>
-            <td><input type="text" placeholder="Ej: GÓMEZ"></td>
+            <td>
+                <select class="select-talle">
+                    <!-- Se llenará dinámicamente -->
+                </select>
+            </td>
+            <td><input type="number" class="input-numero" placeholder="Ej: 10" style="width: 70px;"></td>
+            <td><input type="text" class="input-nombre" placeholder="Ej: GÓMEZ"></td>
             <td><button type="button" class="btn-eliminar" style="color: #d90267; background: transparent; border: none; cursor: pointer; font-weight: bold; font-size: 1.2rem;">X</button></td>
         `;
+
         tablaPlantel.appendChild(nuevaFila);
 
-        // Lógica para eliminar la fila recién creada
-        nuevaFila.querySelector(".btn-eliminar").addEventListener("click", function() {
+        // Elementos de la fila recién creada
+        const selectCategoria = nuevaFila.querySelector(".select-categoria");
+        const selectTalle = nuevaFila.querySelector(".select-talle");
+        const btnEliminar = nuevaFila.querySelector(".btn-eliminar");
+
+        // Función interna para cargar los talles según la categoría seleccionada
+        function actualizarTalles() {
+            selectTalle.innerHTML = ""; // Limpiar opciones
+            const opciones = selectCategoria.value === "Adulto" ? tallesAdulto : tallesNino;
+            
+            opciones.forEach(talle => {
+                const opt = document.createElement("option");
+                opt.value = talle;
+                opt.textContent = talle;
+                selectTalle.appendChild(opt);
+            });
+        }
+
+        // Cargar talles por defecto (Adulto)
+        actualizarTalles();
+
+        // Escuchar cambios en la categoría (Adulto <-> Niño)
+        selectCategoria.addEventListener("change", actualizarTalles);
+
+        // Lógica para eliminar la fila
+        btnEliminar.addEventListener("click", function() {
             nuevaFila.remove();
         });
-    });
+    }
+
+    // Agregar la primera fila al cargar la página
+    agregarFila();
+
+    // Evento para el botón de agregar jugador
+    btnAgregar.addEventListener("click", agregarFila);
 
     // 2. Lógica para recopilar datos, generar PDF y enviar a WhatsApp
     btnEnviar.addEventListener("click", function(e) {
@@ -56,13 +94,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Recorrer la tabla para extraer la info
         filas.forEach(fila => {
-            const tipo = fila.querySelector("td:nth-child(1) select").value;
-            const talle = fila.querySelector("td:nth-child(2) select").value;
-            const numero = fila.querySelector("td:nth-child(3) input").value || "S/N";
-            const nombre = fila.querySelector("td:nth-child(4) input").value || "Sin nombre";
+            const tipo = fila.querySelector(".select-tipo").value;
+            const categoria = fila.querySelector(".select-categoria").value;
+            const talle = fila.querySelector(".select-talle").value;
+            const numero = fila.querySelector(".input-numero").value || "S/N";
+            const nombre = fila.querySelector(".input-nombre").value || "Sin nombre";
 
-            datosTabla.push([tipo, talle, numero, nombre]);
-            textoWhatsApp += `- ${tipo} | Talle ${talle} | N° ${numero} | ${nombre}\n`;
+            datosTabla.push([tipo, categoria, talle, numero, nombre]);
+            textoWhatsApp += `- ${tipo} (${categoria}) | Talle ${talle} | N° ${numero} | ${nombre}\n`;
         });
 
         textoWhatsApp += `\n*Nota:* Te adjunto en este chat el PDF del pedido y las imágenes del diseño que descargué del editor 3D.`;
@@ -71,23 +110,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Título del PDF
+        // Título y datos del cliente en el PDF
         doc.setFontSize(20);
         doc.text("Pedido de Camisetas - Valknut", 14, 20);
-        
-        // Datos del cliente en el PDF
         doc.setFontSize(12);
         doc.text(`Equipo: ${equipo}`, 14, 30);
         doc.text(`Contacto: ${contacto}`, 14, 38);
         doc.text(`Cantidad: ${cantidad}`, 14, 46);
 
-        // Generar tabla en el PDF
+        // Generar tabla en el PDF (Actualizada con 5 columnas)
         doc.autoTable({
             startY: 55,
-            head: [['Tipo', 'Talle', 'Número', 'Nombre en Espalda']],
+            head: [['Tipo', 'Categoría', 'Talle', 'Número', 'Nombre en Espalda']],
             body: datosTabla,
             theme: 'grid',
-            headStyles: { fillColor: [217, 2, 103] } // Color de acento Valknut (--accent)
+            headStyles: { fillColor: [217, 2, 103] }
         });
 
         // Descargar el PDF
