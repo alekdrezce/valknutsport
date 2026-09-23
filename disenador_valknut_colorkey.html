@@ -126,6 +126,29 @@
     font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
     color: var(--text-dim); margin-bottom: 11px;
   }
+  .group.collapsible > .group-title {
+    cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between;
+    padding: 2px 0;
+  }
+  .group.collapsible > .group-title::after {
+    content: ''; width: 7px; height: 7px; border-right: 1.6px solid var(--text-dim); border-bottom: 1.6px solid var(--text-dim);
+    transform: rotate(45deg); transition: transform 0.18s ease; margin-left: 8px; flex-shrink: 0;
+  }
+  .group.collapsible.collapsed > .group-title { margin-bottom: 0; }
+  .group.collapsible.collapsed > .group-title::after { transform: rotate(-45deg); }
+  .group.collapsible.collapsed > *:not(.group-title) { display: none; }
+  .subgroup { margin-bottom: 14px; border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 12px; background: rgba(255,255,255,0.015); }
+  .subgroup-title {
+    font-size: 13px; font-weight: 500; cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: space-between; padding: 2px 0;
+  }
+  .subgroup-title::after {
+    content: ''; width: 7px; height: 7px; border-right: 1.6px solid var(--text-dim); border-bottom: 1.6px solid var(--text-dim);
+    transform: rotate(45deg); transition: transform 0.18s ease; margin-left: 8px; flex-shrink: 0;
+  }
+  .subgroup.collapsed .subgroup-title::after { transform: rotate(-45deg); }
+  .subgroup-body { margin-top: 10px; }
+  .subgroup.collapsed .subgroup-body { display: none; }
   .seg { display: flex; background: var(--field-bg); border-radius: 10px; padding: 3px; gap: 3px; margin-bottom: 10px; }
   .seg button {
     flex: 1; border: none; background: transparent; color: var(--text-dim);
@@ -181,7 +204,9 @@
   .switch input:checked + .slider { background: var(--accent); }
   .switch input:checked + .slider::before { transform: translateX(16px); background: #12141a; }
 
-  .upload-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+  .upload-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .upload-row > .upload-btn { flex: 1 1 100%; }
+  .upload-row > .upload-action, .upload-row > .upload-clear { flex: 1; min-width: 90px; }
   .upload-btn {
     background: var(--field-bg); color: var(--text);
     border: 1px dashed var(--panel-border);
@@ -190,7 +215,18 @@
     display: flex; align-items: center; justify-content: space-between;
   }
   .upload-btn:hover { border-color: var(--accent); }
-  .upload-clear { color: #d9756b; font-size: 11.5px; background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; }
+  .upload-clear {
+    color: #e8918a; font-size: 12.5px; font-weight: 500; background: var(--field-bg);
+    border: 1px solid rgba(217,117,107,0.4); border-radius: 8px; padding: 8px 10px;
+    cursor: pointer; text-align: center; transition: 0.15s;
+  }
+  .upload-clear:hover { background: rgba(217,117,107,0.14); border-color: #d9756b; }
+  .upload-action {
+    color: var(--accent); font-size: 12.5px; font-weight: 500; background: var(--field-bg);
+    border: 1px solid rgba(201,162,75,0.4); border-radius: 8px; padding: 8px 10px;
+    cursor: pointer; text-align: center; transition: 0.15s;
+  }
+  .upload-action:hover { background: rgba(201,162,75,0.14); border-color: var(--accent); }
 
   footer { color: var(--text-dim); font-size: 11px; line-height: 1.5; margin-top: 4px; }
 
@@ -253,10 +289,18 @@
         <canvas id="canvasFront"></canvas>
         <div class="dropzone" id="dz-escudo" title="Cargar escudo"></div>
         <div class="dropzone" id="dz-sponsor" title="Cargar sponsor"></div>
+        <div class="dropzone" id="dz-lateral-l" title="Sponsor lateral"></div>
+        <div class="dropzone" id="dz-lateral-r" title="Sponsor lateral"></div>
+        <div class="dropzone" id="dz-hombro-l" title="Sponsor hombro"></div>
+        <div class="dropzone" id="dz-hombro-r" title="Sponsor hombro"></div>
+        <div class="dropzone" id="dz-manga-l" title="Sponsor manga"></div>
+        <div class="dropzone" id="dz-manga-r" title="Sponsor manga"></div>
         <span class="mv-label">Frente</span>
       </div>
       <div class="mv-cell">
         <canvas id="canvasBack"></canvas>
+        <div class="dropzone" id="dz-espalda-alta" title="Sponsor espalda alta"></div>
+        <div class="dropzone" id="dz-espalda-baja" title="Sponsor espalda baja"></div>
         <span class="mv-label">Espalda</span>
       </div>
       <div class="mv-cell" id="mv-cell-medias">
@@ -293,23 +337,23 @@
       <div class="group-title">Colores base</div>
     </div>
 
-    <div class="group" id="logosGroup">
+    <div class="group collapsible" id="logosGroup">
       <div class="group-title">Logos</div>
       <div class="row" style="margin-bottom:10px;">
         <div class="row-label">
           <label class="switch"><input type="checkbox" id="t-linklogos"><span class="slider"></span></label>
-          Usar el mismo color para los dos
+          Usar el mismo color para todos
         </div>
       </div>
       <div id="logoColorRows"></div>
     </div>
 
-    <div class="group" id="cuelloDetailGroup">
-      <div class="group-title">Detalles de cuello (frente y espalda)</div>
-    </div>
-
-    <div class="group" id="punosDetailGroup">
-      <div class="group-title">Detalles de puños (superpuestos)</div>
+    <div class="group collapsible collapsed" id="cuelloPunosDetailGroup">
+      <div class="group-title">Detalles de cuello y puños</div>
+      <div class="row-label" style="margin-bottom:8px;">Cuello (frente y espalda)</div>
+      <div id="cuelloDetailGroup"></div>
+      <div class="row-label" style="margin-top:14px; margin-bottom:8px;">Puños (superpuestos)</div>
+      <div id="punosDetailGroup"></div>
     </div>
 
     <div class="group">
@@ -321,7 +365,7 @@
       <div id="designColors" style="margin-top:10px;"></div>
     </div>
 
-    <div class="group" id="nameNumberGroup">
+    <div class="group collapsible" id="nameNumberGroup">
       <div class="group-title">Nombre y número</div>
       <div class="row" style="margin-bottom:10px;">
         <div class="row-label">Tipografía</div>
@@ -344,6 +388,12 @@
         <div class="row-label">Número</div>
       </div>
       <input type="text" class="hexinput-full" id="input-numero" placeholder="Número" style="width:100%;">
+      <div class="row" style="margin-top:10px; margin-bottom:6px;">
+        <div class="row-label">
+          <label class="switch"><input type="checkbox" id="t-nombreabajo"><span class="slider"></span></label>
+          Nombre debajo del número
+        </div>
+      </div>
       <div class="row" style="margin-top:12px; margin-bottom:6px;">
         <div class="row-label">
           <label class="switch"><input type="checkbox" id="t-textstroke"><span class="slider"></span></label>
@@ -353,41 +403,116 @@
       <div class="row" id="textStrokeColorRow"></div>
     </div>
 
-    <div class="group" id="frontOnlyGroup">
-      <div class="group-title">Elementos del frente</div>
-    </div>
+    <div class="group collapsible collapsed" id="estampadosGroup">
+      <div class="group-title">Estampados</div>
 
-    <div class="group" id="teamCustomGroup">
-      <div class="group-title">Personalización del equipo</div>
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Escudo</div>
+      <div class="subgroup-body">
       <div class="upload-row">
-        <button class="upload-btn" id="btn-escudo">Agregar escudo <span>＋</span></button>
-        <button class="upload-clear" id="removebg-escudo">Quitar fondo</button>
-        <button class="upload-clear" id="clear-escudo" style="display:none;">Quitar escudo</button>
+        <button class="upload-btn" id="btn-escudo">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-escudo">Quitar fondo</button>
+        <button class="upload-clear" id="clear-escudo" style="display:none;">Quitar</button>
       </div>
-      <div class="row" style="margin-bottom:14px;">
-        <div class="row-label">
-          <label class="switch"><input type="checkbox" id="t-escudocolor"><span class="slider"></span></label>
-          Aplicar color al escudo
-        </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-escudocolor"><span class="slider"></span></label>Aplicar color</div>
       </div>
-      <div class="row" id="escudoColorRow" style="margin-bottom:14px;"></div>
+      <div class="row" id="escudoColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
 
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Pecho</div>
+      <div class="subgroup-body">
       <div class="upload-row">
-        <button class="upload-btn" id="btn-sponsor">Agregar sponsor <span>＋</span></button>
-        <button class="upload-clear" id="removebg-sponsor">Quitar fondo</button>
-        <button class="upload-clear" id="clear-sponsor" style="display:none;">Quitar sponsor</button>
+        <button class="upload-btn" id="btn-sponsor">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-sponsor">Quitar fondo</button>
+        <button class="upload-clear" id="clear-sponsor" style="display:none;">Quitar</button>
       </div>
-      <div class="row" style="margin-bottom:14px;">
-        <div class="row-label">
-          <label class="switch"><input type="checkbox" id="t-sponsorcolor"><span class="slider"></span></label>
-          Aplicar color al sponsor
-        </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-sponsorcolor"><span class="slider"></span></label>Aplicar color</div>
       </div>
-      <div class="row" id="sponsorColorRow"></div>
+      <div class="row" id="sponsorColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
+
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Laterales (espejado)</div>
+      <div class="subgroup-body">
+      <div class="upload-row">
+        <button class="upload-btn" id="btn-lateral">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-lateral">Quitar fondo</button>
+        <button class="upload-clear" id="clear-lateral" style="display:none;">Quitar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-lateralcolor"><span class="slider"></span></label>Aplicar color</div>
+      </div>
+      <div class="row" id="lateralColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
+
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Hombros (espejado)</div>
+      <div class="subgroup-body">
+      <div class="upload-row">
+        <button class="upload-btn" id="btn-hombro">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-hombro">Quitar fondo</button>
+        <button class="upload-clear" id="clear-hombro" style="display:none;">Quitar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-hombrocolor"><span class="slider"></span></label>Aplicar color</div>
+      </div>
+      <div class="row" id="hombroColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
+
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Mangas (espejado)</div>
+      <div class="subgroup-body">
+      <div class="upload-row">
+        <button class="upload-btn" id="btn-manga">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-manga">Quitar fondo</button>
+        <button class="upload-clear" id="clear-manga" style="display:none;">Quitar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-mangacolor"><span class="slider"></span></label>Aplicar color</div>
+      </div>
+      <div class="row" id="mangaColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
+
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Espalda alta</div>
+      <div class="subgroup-body">
+      <div class="upload-row">
+        <button class="upload-btn" id="btn-espaldaalta">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-espaldaalta">Quitar fondo</button>
+        <button class="upload-clear" id="clear-espaldaalta" style="display:none;">Quitar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-espaldaaltacolor"><span class="slider"></span></label>Aplicar color</div>
+      </div>
+      <div class="row" id="espaldaaltaColorRow" style="margin-bottom:4px;"></div>
+      </div></div>
+
+      <div class="subgroup collapsed">
+      <div class="subgroup-title">Espalda baja</div>
+      <div class="subgroup-body">
+      <div class="upload-row">
+        <button class="upload-btn" id="btn-espaldabaja">Agregar <span>＋</span></button>
+        <button class="upload-action" id="removebg-espaldabaja">Quitar fondo</button>
+        <button class="upload-clear" id="clear-espaldabaja" style="display:none;">Quitar</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="row-label"><label class="switch"><input type="checkbox" id="t-espaldabajacolor"><span class="slider"></span></label>Aplicar color</div>
+      </div>
+      <div class="row" id="espaldabajaColorRow"></div>
+      </div></div>
 
       <input type="file" id="file-escudo" accept="image/*" style="display:none;">
       <input type="file" id="file-sponsor" accept="image/*" style="display:none;">
+      <input type="file" id="file-lateral" accept="image/*" style="display:none;">
+      <input type="file" id="file-hombro" accept="image/*" style="display:none;">
+      <input type="file" id="file-manga" accept="image/*" style="display:none;">
+      <input type="file" id="file-espaldaalta" accept="image/*" style="display:none;">
+      <input type="file" id="file-espaldabaja" accept="image/*" style="display:none;">
     </div>
+
 
     <div class="group" id="shortGroup">
       <div class="row" style="margin-bottom:12px;">
@@ -474,6 +599,62 @@ const SPONSOR_RECT = (() => {
   const cx = orig.x + orig.w/2;
   return { x: cx - w/2, y: 1400, w, h };
 })();
+// tamaño "inteligente" para el sponsor de pecho: prioriza un ancho o alto visible segun la
+// proporcion real de la imagen, sin superar estos maximos (para que nunca quede gigante)
+const SPONSOR_MAX_W = SPONSOR_RECT.w;
+const SPONSOR_MAX_H = 480;
+function sponsorSmartFit(imgObj, rect, scale){
+  const cx = (rect.x + rect.w/2) * scale, cy = (rect.y + rect.h/2) * scale;
+  const maxW = SPONSOR_MAX_W * scale, maxH = SPONSOR_MAX_H * scale;
+  const ar = imgObj.naturalWidth / imgObj.naturalHeight;
+  let w, h;
+  if (ar >= 1) { w = maxW; h = w/ar; if (h > maxH) { h = maxH; w = h*ar; } }
+  else { h = maxH; w = h*ar; if (w > maxW) { w = maxW; h = w/ar; } }
+  return { x: cx - w/2, y: cy - h/2, w, h };
+}
+
+// ---------- sponsors adicionales (prueba): laterales, hombros, mangas (espejados) + espalda alta/baja ----------
+// Angulo real de la linea de hombro, medido sobre el contorno (de casi el cuello a donde arranca la manga)
+const SHOULDER_ANGLE_DEG = 23.22;
+function mirrorPoint(x, y){ return { x: REF - x, y }; }
+function rrect(cx, cy, w, h, angle){ return { cx, cy, w, h, angle }; }
+
+// hombros y mangas: elongados, paralelos a la linea de hombro, a distancia sana de esa linea (hacia adentro)
+const HOMBRO_L = rrect(1245.6, 687.1, 260, 100, -SHOULDER_ANGLE_DEG);
+const HOMBRO_R = rrect(REF-1245.6, 687.1, 260, 100, SHOULDER_ANGLE_DEG);
+const MANGA_L = rrect(745.6, 901.6, 240, 100, -SHOULDER_ANGLE_DEG);
+const MANGA_R = rrect(REF-745.6, 901.6, 240, 100, SHOULDER_ANGLE_DEG);
+
+// laterales: elongados y rotados 90 grados, mas grandes y bien adentro del contorno (torso mide ~902-2601 en esa altura)
+const LATERAL_L = rrect(1040, 1900, 480, 230, -90);
+const LATERAL_R = rrect(REF-1040, 1900, 480, 230, -90);
+
+const ESPALDA_ALTA_RECT = { x: REF/2 - 500, y: 750, w: 1000, h: 270 };
+const ESPALDA_BAJA_RECT = { x: REF/2 - 500, y: 2300, w: 1000, h: 300 };
+// nombre y numero de espalda: posicion base (con el sponsor de espalda alta activado) y la
+// posicion original (sin el, subiendo todo el bloque para ocupar ese lugar) + gap entre ambos
+const BACK_NAME_H = 180, BACK_NUMBER_H = 850;
+const BACK_NAME_Y_CON_ESPALDA_ALTA = 1130;
+const BACK_NAME_Y_ORIGINAL = 1012;
+const BACK_GAP = 123; // distancia original entre el borde inferior del nombre y el superior del numero
+const BACK_SPONSOR_GAP = 55; // distancia minima entre el contenido real del sponsor de espalda alta y el nombre
+function backNameNumberPositions(){
+  let nameYTop = BACK_NAME_Y_ORIGINAL;
+  if (state.espaldaaltaImg && state.espaldaaltaContentBottom != null) {
+    const minNameTop = state.espaldaaltaContentBottom + BACK_SPONSOR_GAP + BACK_NAME_H/2;
+    nameYTop = Math.max(BACK_NAME_Y_ORIGINAL, minNameTop);
+  }
+  if (!state.toggles.nombreAbajo) {
+    // nombre arriba (default): nombre en su lugar, numero debajo a la distancia original
+    const numberY = nameYTop + BACK_NAME_H/2 + BACK_GAP + BACK_NUMBER_H/2;
+    return { nameY: nameYTop, numberY };
+  }
+  // nombre abajo: el numero sube a ocupar el tope original del nombre, y el nombre pasa a
+  // ir debajo del numero, manteniendo la misma distancia original entre ambos
+  const numberY = nameYTop - BACK_NAME_H/2 + BACK_NUMBER_H/2;
+  const nameY = numberY + BACK_NUMBER_H/2 + BACK_GAP + BACK_NAME_H/2;
+  return { nameY, numberY };
+}
 // Escudo del short: misma medida que el escudo de la camiseta, centrado en el punto dado
 const ESCUDO_SHORT_RECT = (() => {
   const w = ESCUDO_RECT.w, h = ESCUDO_RECT.h;
@@ -590,20 +771,25 @@ let state = {
     nombrenumero: '#FFFFFF', logomangas: '#C9A24B', logoespalda: '#C9A24B', logo: '#C9A24B',
     escudo: '#FFFFFF', sponsor: '#FFFFFF', textStroke: '#1E1E1E', contornologo: '#1E1E1E',
     shortBase: '#1E1E1E', shortFranjaLat: '#C9A24B', shortFranjaInf: '#C9A24B', shortLogo: '#C9A24B',
-    medias: '#1E1E1E', escudoShort: '#FFFFFF', numeroShort: '#FFFFFF', numeroShortStroke: '#1E1E1E'
+    medias: '#1E1E1E', escudoShort: '#FFFFFF', numeroShort: '#FFFFFF', numeroShortStroke: '#1E1E1E',
+    lateral: '#FFFFFF', hombro: '#FFFFFF', manga: '#FFFFFF', espaldaalta: '#FFFFFF', espaldabaja: '#FFFFFF'
   },
   toggles: {
     cuello1:false, cuello2:false, cuello3:false,
     punos1:false, punos2:false, punos3:false,
     punosbase:true, etiqueta:true, sponsor:false,
-    nombre:true,
+    nombre:true, nombreAbajo:false,
     escudoColor:false, sponsorColor:false, textStroke:false, contornologo:false,
     shortFranjaLat:false, shortFranjaInf:false, escudoShortColor:false, numeroShortStroke:false,
-    showShort:false, showMedias:false
+    showShort:false, showMedias:false,
+    lateral:false, hombro:false, manga:false, espaldaalta:false, espaldabaja:false,
+    lateralColor:false, hombroColor:false, mangaColor:false, espaldaaltaColor:false, espaldabajaColor:false
   },
   designColors: {},
   escudoImg: null,
+  espaldaaltaContentBottom: null,
   sponsorImg: null,
+  lateralImg: null, hombroImg: null, mangaImg: null, espaldaaltaImg: null, espaldabajaImg: null,
   nombre: '',
   numero: '',
   font: 'font_1',
@@ -671,6 +857,26 @@ function containFit(imgW, imgH, boxX, boxY, boxW, boxH) {
   const scale = Math.min(boxW/imgW, boxH/imgH);
   const w = imgW*scale, h = imgH*scale;
   return { x: boxX+(boxW-w)/2, y: boxY+(boxH-h)/2, w, h };
+}
+
+// detecta el borde inferior real (pixeles opacos) de una imagen ya ajustada dentro de un rect,
+// para poder acomodar automaticamente lo que va debajo segun el tamaño real del contenido
+function measureUploadContentBottom(img, rect){
+  if (!img) return null;
+  const fit = containFit(img.naturalWidth, img.naturalHeight, 0, 0, rect.w, rect.h);
+  const cw = Math.max(1, Math.ceil(rect.w)), ch = Math.max(1, Math.ceil(rect.h));
+  const c = document.createElement('canvas');
+  c.width = cw; c.height = ch;
+  const cctx = c.getContext('2d');
+  cctx.drawImage(img, fit.x, fit.y, fit.w, fit.h);
+  const data = cctx.getImageData(0,0,cw,ch).data;
+  for (let y = ch-1; y >= 0; y--){
+    const rowOff = y*cw*4;
+    for (let x = 0; x < cw; x++){
+      if (data[rowOff + x*4 + 3] > 10) return rect.y + y;
+    }
+  }
+  return rect.y; // completamente transparente: no ocupa espacio
 }
 
 // ---------- calibración de tamaño de fuente por altura visual real ----------
@@ -748,7 +954,7 @@ function drawPlainOn(ctx, size, key){
   const img = IMG_CACHE[key];
   if (img) ctx.drawImage(img,0,0,size,size);
 }
-function drawUploadOn(ctx, size, scale, imgObj, rect, showPlaceholder, colorToggleKey, colorKey){
+function drawUploadOn(ctx, size, scale, imgObj, rect, showPlaceholder, colorToggleKey, colorKey, customFit){
   if (!imgObj) {
     if (showPlaceholder) {
       ctx.save();
@@ -759,11 +965,20 @@ function drawUploadOn(ctx, size, scale, imgObj, rect, showPlaceholder, colorTogg
       ctx.restore();
     }
   } else {
-    const fit = containFit(imgObj.naturalWidth, imgObj.naturalHeight, rect.x*scale, rect.y*scale, rect.w*scale, rect.h*scale);
+    const fit = customFit ? customFit(imgObj, rect, scale) : containFit(imgObj.naturalWidth, imgObj.naturalHeight, rect.x*scale, rect.y*scale, rect.w*scale, rect.h*scale);
     const useColor = colorToggleKey && state.toggles[colorToggleKey];
     const drawSrc = useColor ? (getRecoloredUpload(imgObj, state.colors[colorKey]) || imgObj) : imgObj;
     ctx.drawImage(drawSrc, fit.x, fit.y, fit.w, fit.h);
   }
+}
+// variante rotada: rota alrededor del centro de un rect {cx,cy,w,h,angle} y delega en drawUploadOn con un rect local centrado en 0,0
+function drawUploadOnRotated(ctx, size, scale, imgObj, rrect, showPlaceholder, colorToggleKey, colorKey){
+  ctx.save();
+  ctx.translate(rrect.cx*scale, rrect.cy*scale);
+  ctx.rotate(rrect.angle * Math.PI/180);
+  const localRect = { x: -rrect.w*scale/2, y: -rrect.h*scale/2, w: rrect.w*scale, h: rrect.h*scale };
+  drawUploadOn(ctx, size, 1, imgObj, localRect, showPlaceholder, colorToggleKey, colorKey);
+  ctx.restore();
 }
 function drawTextOn(ctx, size, scale, text, centerX, centerY, targetHeight, calibText, fam, color, strokeOn, strokeColor){
   if (!text || !fam) return;
@@ -808,7 +1023,13 @@ function drawFront(ctx, size){
 
   drawPlainOn(ctx,size, 'etiqueta');
   drawUploadOn(ctx, size, scale, state.escudoImg, ESCUDO_RECT, true, 'escudoColor', 'escudo');
-  if (state.toggles.sponsor) drawUploadOn(ctx, size, scale, state.sponsorImg, SPONSOR_RECT, true, 'sponsorColor', 'sponsor');
+  drawUploadOn(ctx, size, scale, state.sponsorImg, SPONSOR_RECT, false, 'sponsorColor', 'sponsor', sponsorSmartFit);
+  drawUploadOnRotated(ctx, size, scale, state.lateralImg, LATERAL_L, false, 'lateralColor', 'lateral');
+  drawUploadOnRotated(ctx, size, scale, state.lateralImg, LATERAL_R, false, 'lateralColor', 'lateral');
+  drawUploadOnRotated(ctx, size, scale, state.hombroImg, HOMBRO_L, false, 'hombroColor', 'hombro');
+  drawUploadOnRotated(ctx, size, scale, state.hombroImg, HOMBRO_R, false, 'hombroColor', 'hombro');
+  drawUploadOnRotated(ctx, size, scale, state.mangaImg, MANGA_L, false, 'mangaColor', 'manga');
+  drawUploadOnRotated(ctx, size, scale, state.mangaImg, MANGA_R, false, 'mangaColor', 'manga');
 
   // Logos: siempre visibles (sin toggle), inmediatamente debajo del contorno
   if (state.toggles.contornologo) drawColoredOn(ctx,size, 'contornologo', state.colors['contornologo']);
@@ -840,11 +1061,14 @@ function drawBack(ctx, size){
   }
 
   const fam = FONT_FACES[state.font] || FONT_FACES['font_1'];
-  if (state.toggles.nombre && state.nombre) drawTextOn(ctx,size,scale, state.nombre, REF/2, 1012, 180, NAME_CALIB, fam, state.colors['nombrenumero'], state.toggles.textStroke, state.colors['textStroke']);
-  if (state.numero) drawTextOn(ctx,size,scale, state.numero, REF/2, 1650, 850, NUMBER_CALIB, fam, state.colors['nombrenumero'], state.toggles.textStroke, state.colors['textStroke']);
+  const backPos = backNameNumberPositions();
+  if (state.toggles.nombre && state.nombre) drawTextOn(ctx,size,scale, state.nombre, REF/2, backPos.nameY, BACK_NAME_H, NAME_CALIB, fam, state.colors['nombrenumero'], state.toggles.textStroke, state.colors['textStroke']);
+  if (state.numero) drawTextOn(ctx,size,scale, state.numero, REF/2, backPos.numberY, BACK_NUMBER_H, NUMBER_CALIB, fam, state.colors['nombrenumero'], state.toggles.textStroke, state.colors['textStroke']);
 
   drawColoredOn(ctx,size, 'logomangas', state.colors['logomangas']);
   drawColoredOn(ctx,size, 'logoespalda', state.colors['logoespalda']);
+  drawUploadOn(ctx, size, scale, state.espaldaaltaImg, ESPALDA_ALTA_RECT, false, 'espaldaaltaColor', 'espaldaalta');
+  drawUploadOn(ctx, size, scale, state.espaldabajaImg, ESPALDA_BAJA_RECT, false, 'espaldabajaColor', 'espaldabaja');
 
   const contKey = IMG_CACHE[bk+'_CONTORNO'] ? bk+'_CONTORNO' : 'EMP_CONTORNO';
   drawPlainOn(ctx,size, contKey);
@@ -1024,6 +1248,28 @@ function layoutDropzones(){
   dzS.style.top = pct(SPONSOR_RECT.y);
   dzS.style.width = pct(SPONSOR_RECT.w);
   dzS.style.height = pct(SPONSOR_RECT.h);
+
+  const placeDz = (id, rect) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.left = pct(rect.x); el.style.top = pct(rect.y);
+    el.style.width = pct(rect.w); el.style.height = pct(rect.h);
+  };
+  const placeDzRotated = (id, rr) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.left = pct(rr.cx - rr.w/2);
+    el.style.top = pct(rr.cy - rr.h/2);
+    el.style.width = pct(rr.w);
+    el.style.height = pct(rr.h);
+    el.style.transform = 'rotate(' + rr.angle + 'deg)';
+    el.style.transformOrigin = 'center center';
+  };
+  placeDzRotated('dz-lateral-l', LATERAL_L); placeDzRotated('dz-lateral-r', LATERAL_R);
+  placeDzRotated('dz-hombro-l', HOMBRO_L); placeDzRotated('dz-hombro-r', HOMBRO_R);
+  placeDzRotated('dz-manga-l', MANGA_L); placeDzRotated('dz-manga-r', MANGA_R);
+  placeDz('dz-espalda-alta', ESPALDA_ALTA_RECT);
+  placeDz('dz-espalda-baja', ESPALDA_BAJA_RECT);
 }
 
 // ---------- popover de color ----------
@@ -1292,13 +1538,13 @@ function buildBaseColors(){
 }
 function buildDetailGroups(){
   const cBox = document.getElementById('cuelloDetailGroup');
-  cBox.innerHTML = '<div class="group-title">Detalles de cuello (frente y espalda)</div>';
+  cBox.innerHTML = '';
   makeColorRow(cBox, 'cuello1', 'Pieza 1', true, 'cuello1');
   makeColorRow(cBox, 'cuello2', 'Pieza 2', true, 'cuello2');
   makeColorRow(cBox, 'cuello3', 'Pieza 3', true, 'cuello3');
 
   const pBox = document.getElementById('punosDetailGroup');
-  pBox.innerHTML = '<div class="group-title">Detalles de puños (superpuestos)</div>';
+  pBox.innerHTML = '';
   makeColorRow(pBox, 'punos1', 'Pieza 1', true, 'punos1');
   makeColorRow(pBox, 'punos2', 'Pieza 2', true, 'punos2');
   makeColorRow(pBox, 'punos3', 'Pieza 3', true, 'punos3');
@@ -1318,11 +1564,6 @@ function mkToggleRow(box, label, toggleKey, onExtra){
   row.appendChild(lw);
   box.appendChild(row);
   return cb;
-}
-function buildFrontExtras(){
-  const box = document.getElementById('frontOnlyGroup');
-  box.innerHTML = '<div class="group-title">Elementos del frente</div>';
-  mkToggleRow(box, 'Sponsor', 'sponsor');
 }
 
 function refreshColorButtons(){
@@ -1530,13 +1771,28 @@ function buildTeamColorRows(){
   const sBox = document.getElementById('sponsorColorRow');
   sBox.innerHTML = '';
   makeColorRow(sBox, 'sponsor', 'Color del sponsor');
+
+  [['lateral','lateralColorRow','Color'],['hombro','hombroColorRow','Color'],['manga','mangaColorRow','Color'],
+   ['espaldaalta','espaldaaltaColorRow','Color'],['espaldabaja','espaldabajaColorRow','Color']].forEach(([key,rowId,label])=>{
+    const box = document.getElementById(rowId);
+    box.innerHTML = '';
+    makeColorRow(box, key, label);
+  });
 }
+['lateral','hombro','manga','espaldaalta','espaldabaja','sponsor'].forEach(key=>{
+  document.getElementById('t-'+key+'color').addEventListener('change', (e)=>{
+    state.toggles[key+'Color'] = e.target.checked;
+    render();
+  });
+});
+// las mangas/hombros/laterales tienen dropzone espejado (izq y der): el derecho dispara el mismo input
+['lateral','hombro','manga'].forEach(key=>{
+  const input = document.getElementById('file-'+key);
+  const dzR = document.getElementById('dz-'+key+'-r');
+  if (dzR) dzR.addEventListener('click', ()=> input.click());
+});
 document.getElementById('t-escudocolor').addEventListener('change', (e)=>{
   state.toggles.escudoColor = e.target.checked;
-  render();
-});
-document.getElementById('t-sponsorcolor').addEventListener('change', (e)=>{
-  state.toggles.sponsorColor = e.target.checked;
   render();
 });
 
@@ -1625,9 +1881,19 @@ function wireUpload(btnId, dzId, fileId, clearId, stateKey, toggleKey){
   const dz = document.getElementById(dzId);
   const file = document.getElementById(fileId);
   const clearBtn = document.getElementById(clearId);
-  const trigger = ()=>file.click();
-  btn.addEventListener('click', trigger);
-  dz.addEventListener('click', trigger);
+
+  // patron robusto: el input real queda superpuesto EXACTAMENTE sobre el boton visible,
+  // asi el clic cae directo sobre el campo nativo (en vez de depender de un .click() sintetico
+  // disparado desde otro elemento, que algunos navegadores/extensiones bloquean)
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative; width:100%;';
+  btn.parentNode.insertBefore(wrap, btn);
+  wrap.appendChild(btn);
+  btn.style.width = '100%';
+  file.style.cssText = 'position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; margin:0; padding:0;';
+  wrap.appendChild(file);
+
+  if (dz) dz.addEventListener('click', ()=> file.click());
   file.addEventListener('change', ()=>{
     const f = file.files[0];
     if (!f) return;
@@ -1642,6 +1908,7 @@ function wireUpload(btnId, dzId, fileId, clearId, stateKey, toggleKey){
           const cb = document.getElementById('toggle-'+toggleKey);
           if (cb) cb.checked = true;
         }
+        if (stateKey === 'espaldaaltaImg') state.espaldaaltaContentBottom = measureUploadContentBottom(img, ESPALDA_ALTA_RECT);
         render();
       };
       img.src = ev.target.result;
@@ -1657,13 +1924,42 @@ function wireUpload(btnId, dzId, fileId, clearId, stateKey, toggleKey){
       const cb = document.getElementById('toggle-'+toggleKey);
       if (cb) cb.checked = false;
     }
+    if (stateKey === 'espaldaaltaImg') state.espaldaaltaContentBottom = null;
     render();
   });
 }
 wireUpload('btn-escudo','dz-escudo','file-escudo','clear-escudo','escudoImg');
 wireUpload('btn-sponsor','dz-sponsor','file-sponsor','clear-sponsor','sponsorImg','sponsor');
+wireUpload('btn-lateral','dz-lateral-l','file-lateral','clear-lateral','lateralImg','lateral');
+wireUpload('btn-hombro','dz-hombro-l','file-hombro','clear-hombro','hombroImg','hombro');
+wireUpload('btn-manga','dz-manga-l','file-manga','clear-manga','mangaImg','manga');
+wireUpload('btn-espaldaalta','dz-espalda-alta','file-espaldaalta','clear-espaldaalta','espaldaaltaImg','espaldaalta');
+wireUpload('btn-espaldabaja','dz-espalda-baja','file-espaldabaja','clear-espaldabaja','espaldabajaImg','espaldabaja');
 
-// ---------- quitar fondo automático (detecta el color de fondo por las esquinas) ----------
+// ---------- quitar fondo automático (muestreo robusto por borde + suavizado + descontaminación de color) ----------
+function boxBlur1ch(src, w, h, radius){
+  const tmp = new Float32Array(w*h);
+  const out = new Float32Array(w*h);
+  const size = radius*2+1;
+  for (let y=0; y<h; y++){
+    let sum = 0; const rowOff = y*w;
+    for (let x=-radius; x<=radius; x++){ sum += src[rowOff + Math.min(w-1, Math.max(0,x))]; }
+    for (let x=0; x<w; x++){
+      tmp[rowOff+x] = sum/size;
+      sum += src[rowOff + Math.min(w-1, x+radius+1)] - src[rowOff + Math.max(0, x-radius)];
+    }
+  }
+  for (let x=0; x<w; x++){
+    let sum = 0;
+    for (let y=-radius; y<=radius; y++){ sum += tmp[Math.min(h-1, Math.max(0,y))*w + x]; }
+    for (let y=0; y<h; y++){
+      out[y*w+x] = sum/size;
+      sum += tmp[Math.min(h-1, y+radius+1)*w + x] - tmp[Math.max(0, y-radius)*w + x];
+    }
+  }
+  return out;
+}
+function clamp255(v){ return Math.max(0, Math.min(255, Math.round(v))); }
 function removeBackgroundFromImage(img, callback){
   const off = document.createElement('canvas');
   off.width = img.naturalWidth; off.height = img.naturalHeight;
@@ -1672,20 +1968,36 @@ function removeBackgroundFromImage(img, callback){
   const imgData = octx.getImageData(0, 0, off.width, off.height);
   const d = imgData.data;
   const w = off.width, h = off.height;
-
   const px = (x,y) => { const i=(y*w+x)*4; return [d[i],d[i+1],d[i+2]]; };
-  const corners = [px(0,0), px(w-1,0), px(0,h-1), px(w-1,h-1)];
-  const bg = [0,1,2].map(c => Math.round(corners.reduce((s,p)=>s+p[c],0)/4));
 
-  const THRESH = 40, SOFT = 35;
-  for (let i=0; i<d.length; i+=4){
+  const samples = [];
+  const stepX = Math.max(1, Math.floor(w/60)), stepY = Math.max(1, Math.floor(h/60));
+  for (let x=0; x<w; x+=stepX){ samples.push(px(x,0)); samples.push(px(x,h-1)); }
+  for (let y=0; y<h; y+=stepY){ samples.push(px(0,y)); samples.push(px(w-1,y)); }
+  const median = (arr) => { const s=[...arr].sort((a,b)=>a-b); return s[Math.floor(s.length/2)]; };
+  const bg = [0,1,2].map(c => median(samples.map(p=>p[c])));
+
+  const THRESH = 32, SOFT = 65;
+  const n = w*h;
+  const rawAlpha = new Float32Array(n);
+  for (let i=0,p=0; i<d.length; i+=4,p++){
     const dist = Math.sqrt((d[i]-bg[0])**2 + (d[i+1]-bg[1])**2 + (d[i+2]-bg[2])**2);
-    if (dist < THRESH) {
-      d[i+3] = 0;
-    } else if (dist < THRESH+SOFT) {
-      const t = (dist-THRESH)/SOFT;
-      d[i+3] = Math.round(d[i+3]*t);
+    let a;
+    if (dist < THRESH) a = 0;
+    else if (dist < THRESH+SOFT) a = (dist-THRESH)/SOFT;
+    else a = 1;
+    rawAlpha[p] = a * (d[i+3]/255);
+  }
+  const smoothAlpha = boxBlur1ch(rawAlpha, w, h, 2);
+  for (let i=0,p=0; i<d.length; i+=4,p++){
+    const a = smoothAlpha[p];
+    if (a > 0.015 && a < 0.985) {
+      const denom = Math.max(a, 0.18);
+      d[i]   = clamp255((d[i]   - (1-a)*bg[0]) / denom);
+      d[i+1] = clamp255((d[i+1] - (1-a)*bg[1]) / denom);
+      d[i+2] = clamp255((d[i+2] - (1-a)*bg[2]) / denom);
     }
+    d[i+3] = Math.round(a*255);
   }
   octx.putImageData(imgData, 0, 0);
   const newImg = new Image();
@@ -1696,9 +2008,16 @@ document.getElementById('removebg-escudo').addEventListener('click', ()=>{
   if (!state.escudoImg) return;
   removeBackgroundFromImage(state.escudoImg, (newImg)=>{ state.escudoImg = newImg; render(); });
 });
-document.getElementById('removebg-sponsor').addEventListener('click', ()=>{
-  if (!state.sponsorImg) return;
-  removeBackgroundFromImage(state.sponsorImg, (newImg)=>{ state.sponsorImg = newImg; render(); });
+['lateral','hombro','manga','espaldaalta','espaldabaja','sponsor'].forEach(key=>{
+  document.getElementById('removebg-'+key).addEventListener('click', ()=>{
+    const imgKey = key+'Img';
+    if (!state[imgKey]) return;
+    removeBackgroundFromImage(state[imgKey], (newImg)=>{
+      state[imgKey] = newImg;
+      if (key === 'espaldaalta') state.espaldaaltaContentBottom = measureUploadContentBottom(newImg, ESPALDA_ALTA_RECT);
+      render();
+    });
+  });
 });
 
 // ---------- logos (mangas / pecho / espalda) con color vinculado opcional según vista ----------
@@ -1768,6 +2087,10 @@ document.getElementById('input-nombre').addEventListener('input', (e)=>{
 });
 document.getElementById('input-numero').addEventListener('input', (e)=>{
   state.numero = e.target.value;
+  render();
+});
+document.getElementById('t-nombreabajo').addEventListener('change', (e)=>{
+  state.toggles.nombreAbajo = e.target.checked;
   render();
 });
 document.getElementById('t-nombre').addEventListener('change', (e)=>{
@@ -1844,11 +2167,18 @@ document.addEventListener('click', ()=>{ fontPopover.style.display = 'none'; });
 // ---------- init ----------
 window.addEventListener('resize', layoutGarmentGrid);
 
+// ---------- secciones y sub-secciones colapsables (delegado: funciona aunque el contenido se regenere despues) ----------
+document.querySelector('.panel').addEventListener('click', (e) => {
+  const gt = e.target.closest('.group.collapsible > .group-title');
+  if (gt) { gt.closest('.group').classList.toggle('collapsed'); return; }
+  const st = e.target.closest('.subgroup-title');
+  if (st) { st.closest('.subgroup').classList.toggle('collapsed'); }
+});
+
 Promise.all([loadAll(), loadFonts()]).then(()=>{
   layoutDropzones();
   buildBaseColors();
   buildDetailGroups();
-  buildFrontExtras();
   buildTeamColorRows();
   buildNombreNumeroColor();
   buildLogoColorRows();
